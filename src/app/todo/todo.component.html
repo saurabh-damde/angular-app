@@ -1,0 +1,13 @@
+<div class="container my-3">
+  <app-new-todo (addTodo)="addTodo($event)"></app-new-todo>
+  <hr />
+  <h5 class="text-center" *ngIf="!todos.length; else todoList"
+    >There's Nothing to Display...</h5
+  >
+  <ng-template #todoList>
+    <h3 class="text-center mb-5">To-Do List ({{ todos.length }})</h3>
+    <div *ngFor="let todo of todos">
+      <app-item [todo]="todo" (removeTodo)="removeTodo($event)" (updateTodo)="updateTodo($event)"></app-item>
+    </div>
+  </ng-template>
+</div>
