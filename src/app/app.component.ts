@@ -1,27 +1,53 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Post } from './models/post.model';
+import { PostsService } from './services/posts.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  @ViewChild('postForm') postForm: NgForm;
   loadedPosts = [];
+  isFetching = false;
+  err = null;
+  private errSub: Subscription;
 
-  constructor(private http: HttpClient) {}
+  constructor(private postsService: PostsService) {}
 
-  ngOnInit() {}
+  ngOnDestroy(): void {
+    this.errSub.unsubscribe();
+  }
 
-  onCreatePost(postData: { title: string; content: string }) {
-    // Send Http request
+  ngOnInit() {
+    this.errSub = this.postsService.err.subscribe(
+      (errMsg) => (this.err = errMsg)
+    );
+    this.onFetchPosts();
+  }
+
+  onCreatePost(post: Post) {
+    this.postsService.createPost(post);
+    this.postForm.reset();
   }
 
   onFetchPosts() {
-    // Send Http request
+    this.isFetching = true;
+    this.postsService.fetchPosts().subscribe({
+      next: (posts: Post[]) => (this.loadedPosts = posts),
+      error: (err) => (this.err = err.message),
+    });
+    this.isFetching = false;
   }
 
   onClearPosts() {
-    // Send Http request
+    this.postsService.deletePosts().subscribe(() => (this.loadedPosts = []));
+  }
+
+  onHandleError() {
+    this.err = null;
   }
 }
