@@ -15,7 +15,9 @@ import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.compon
 import { RecipesComponent } from './recipes/recipes.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { DropdownDirective } from './shared/dropdown.directive';
-import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner/loading-spinner.component';
+import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
+import { ModalComponent } from './shared/modal/modal.component';
+import { PlaceholderDirective } from './shared/placeholder.directive';
 import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 
@@ -34,6 +36,8 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
     RecipeEditComponent,
     AuthComponent,
     LoadingSpinnerComponent,
+    ModalComponent,
+    PlaceholderDirective,
   ],
   imports: [
     FormsModule,

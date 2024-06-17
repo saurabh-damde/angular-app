@@ -1,21 +1,40 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
 import { AuthResData } from '../models/auth.model';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { ModalComponent } from '../shared/modal/modal.component';
+import { PlaceholderDirective } from '../shared/placeholder.directive';
 
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.css',
 })
-export class AuthComponent {
+export class AuthComponent implements OnDestroy {
+  @ViewChild(PlaceholderDirective) modalHost: PlaceholderDirective;
+  private modalSub: Subscription;
   isLoginMode = true;
   isLoading = false;
   err: string = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private componentResolver: ComponentFactoryResolver
+  ) {}
+
+  ngOnDestroy(): void {
+    if (this.modalSub) {
+      this.modalSub.unsubscribe();
+    }
+  }
 
   onSwitchMode() {
     this.isLoginMode = !this.isLoginMode;
@@ -34,9 +53,29 @@ export class AuthComponent {
     }
     authObs.subscribe(
       (res) => this.router.navigate(['/recipes']),
-      (err) => (this.err = err)
+      (err) => {
+        this.err = err;
+        this.showErrorModal(err);
+      }
     );
     authForm.reset();
     this.isLoading = false;
+  }
+
+  onHandleError() {
+    this.err = null;
+  }
+
+  private showErrorModal(err: string) {
+    const modalCompFact =
+      this.componentResolver.resolveComponentFactory(ModalComponent);
+    const hostRef = this.modalHost.viewContRef;
+    hostRef.clear();
+    const modalRef = hostRef.createComponent(modalCompFact);
+    modalRef.instance.message = err;
+    this.modalSub = modalRef.instance.close.subscribe(() => {
+      this.modalSub.unsubscribe();
+      hostRef.clear();
+    });
   }
 }
