@@ -7,10 +7,10 @@ import {
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { AuthResData } from '../models/auth.model';
-import { AuthService } from '../services/auth.service';
-import { ModalComponent } from '../shared/modal/modal.component';
-import { PlaceholderDirective } from '../shared/placeholder.directive';
+import { AuthResData } from '../../models/auth.model';
+import { AuthService } from '../../services/auth.service';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
+import { PlaceholderDirective } from '../../shared/directives/placeholder.directive';
 
 @Component({
   selector: 'app-auth',
